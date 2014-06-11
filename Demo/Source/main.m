@@ -30,6 +30,7 @@ int main (int argc, const char *argv[])
         NSMutableSet *tablesToSkip = [NSMutableSet set];
         NSString *customMacroPrefix = nil;
         NSString *defaultTableName = nil;
+        NSDictionary *customMacros = nil;
         
         // analyze options
         BOOL optionsInvalid = NO;
@@ -102,6 +103,47 @@ int main (int argc, const char *argv[])
                 }
                 
                 customMacroPrefix = [NSString stringWithUTF8String:argv[i]];
+            }
+            else if (!strcmp("-macroConfig", argv[i]))
+            {
+                // macro config path
+                i++;
+                
+                if (i>=argc)
+                {
+                    // path is missing
+                    optionsInvalid = YES;
+                    break;
+                }
+                
+                NSString *path = [NSString stringWithUTF8String:argv[i]];
+                path = [path stringByStandardizingPath];
+                
+                NSData *configData = [NSData dataWithContentsOfFile:path];
+                if ([configData length] < 1) {
+                    printf("Unable to read data from macro config file: %s", [path UTF8String]);
+                    exit(1);
+                }
+                
+                NSString *errorDescription = nil;
+                if ([[[path pathExtension] lowercaseString] isEqualToString:@"json"]) {
+                    NSError *error = nil;
+                    customMacros = [NSJSONSerialization JSONObjectWithData:configData options:0 error:&error];
+                    errorDescription = [error localizedDescription];
+                } else {
+                    NSString *errorDescription = nil;
+                    customMacros = [NSPropertyListSerialization propertyListFromData:configData 
+                                                                    mutabilityOption:NSPropertyListImmutable 
+                                                                              format:NULL 
+                                                                    errorDescription:&errorDescription];
+                }
+                
+                BOOL isDict = [customMacros isKindOfClass:[NSDictionary class]];
+                if (!isDict || errorDescription) {
+                    printf("Unable to read custom macros: %s", 
+                           [errorDescription UTF8String] ?: (isDict ? "Expected dictionary" : "Unkown error"));
+                    exit(1);
+                }
             }
 			else if (!strcmp("-q", argv[i]))
 			{
@@ -176,6 +218,7 @@ int main (int argc, const char *argv[])
         aggregator.customMacroPrefix = customMacroPrefix;
         aggregator.tablesToSkip = tablesToSkip;
         aggregator.defaultTableName = defaultTableName;
+        aggregator.customMacros = customMacros;
 		
         // go, go, go!
         for (NSURL *file in files) {
@@ -228,6 +271,7 @@ void showUsage(void)
     //   printf("    -j                       sets the input language to Java.\n");
     //   printf("    -a                       append output to the old strings files.\n");
     printf("    -s substring             substitute 'substring' for NSLocalizedString.\n");
+    printf("    -macroConfig path        path to macro config file\n");
     printf("    -skipTable tablename     skip over the file for 'tablename'.\n");
     printf("    -noPositionalParameters  turns off positional parameter support.\n");
     printf("    -u                       allow unicode characters in the values of strings files.\n");

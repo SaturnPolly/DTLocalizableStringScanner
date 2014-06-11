@@ -16,6 +16,7 @@
 .Nm
 .Op Fl noPositionalParameters              \" [-noPositionalParameters]
 .Op Fl s Ar <routine>              \" [-s routine]
+.Op Fl macroConfig Ar <path>              \" [-macroConfig path]
 .Op Fl skipTable Ar <table>              \" [-skipTable table]
 .Op Fl o Ar <outputDir>         \" [-o <outputDir>] 
 .Ar                   \" [file ...]
@@ -47,6 +48,14 @@ Generated .strings files are UTF-16 encoded.  Host endianness is used unless the
  Substitutes routine for NSLocalizedString.  For example, 
  -s MyLocalString will catch calls to MyLocalString and 
  MyLocalStringFromTable. 
+.It Fl macroConfig Ar path
+Path to config file with additional macros that should be 
+recognized. Supports Plists and JSON files. Expects a dictionary where the keys are the macro names and the value
+is an array of parameters (valid parameters are: rawKey, rawValue, tableName, comment, bundle).
+.Pp 
+Example:
+.Pp
+{ "LocStr":[@"rawKey"], "LocStrV":["rawKey", "defaultValue"] }
 .It Fl q 
 Turns off multiple key/value pairs warning
 .It Fl skipTable Ar table

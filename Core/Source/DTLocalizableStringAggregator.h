@@ -42,6 +42,11 @@
 @property (nonatomic, retain) NSString *customMacroPrefix;
 
 /**
+ Dictionary of custom additional macros 
+ */
+@property (nonatomic, retain) NSDictionary *customMacros;
+
+/**
  The default table name, if not set it defaults to "Localizable".
  */
 @property (nonatomic, retain) NSString *defaultTableName;

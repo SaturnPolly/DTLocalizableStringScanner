@@ -10,6 +10,14 @@
 #import "DTLocalizableStringEntry.h"
 #import "NSString+DTLocalizableStringScanner.h"
 
+
+NSString * const DTLocalizableStringParamaterKey     = @"rawKey";
+NSString * const DTLocalizableStringParamaterComment = @"comment";
+NSString * const DTLocalizableStringParamaterValue   = @"rawValue";
+NSString * const DTLocalizableStringParamaterBundle  = @"bundle";
+NSString * const DTLocalizableStringParamaterTable   = @"tableName";
+
+
 @interface DTLocalizableStringScanner ()
 
 - (BOOL)_processMacroAtRange:(NSRange)range;
@@ -386,13 +394,13 @@
                 NSString *property = [expectedParameters objectAtIndex:i];
                 NSString *value = [parameters objectAtIndex:i];
                 
-                if ([property isEqualToString:@"rawKey"]) {
+                if ([property isEqualToString:DTLocalizableStringParamaterKey]) {
                     entry.rawKey = value;
-                } else if ([property isEqualToString:@"comment"]) {
+                } else if ([property isEqualToString:DTLocalizableStringParamaterComment]) {
                     [entry setComment:value];
-                } else if ([property isEqualToString:@"tableName"]) {
+                } else if ([property isEqualToString:DTLocalizableStringParamaterTable]) {
                     entry.tableName = value;
-                } else if ([property isEqualToString:@"bundle"]) {
+                } else if ([property isEqualToString:DTLocalizableStringParamaterBundle]) {
                     entry.bundle = value;
                 } else {
                     [entry setValue:value forKey:property];

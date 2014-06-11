@@ -73,11 +73,11 @@
 	}
 }
 
-#define KEY @"rawKey"
-#define COMMENT @"comment"
-#define VALUE @"rawValue"
-#define BUNDLE @"bundle"
-#define TABLE @"tableName"
+#define KEY     DTLocalizableStringParamaterKey
+#define COMMENT DTLocalizableStringParamaterComment
+#define VALUE   DTLocalizableStringParamaterValue
+#define BUNDLE  DTLocalizableStringParamaterBundle
+#define TABLE   DTLocalizableStringParamaterTable
 
 - (NSDictionary *)validMacros
 {
@@ -104,6 +104,24 @@
 				[validMacros setObject:parameters forKey:macroName];
 			}
 		}
+        
+        NSSet *validParameters = [NSSet setWithObjects:KEY, COMMENT, VALUE, BUNDLE, TABLE, nil];
+        for (NSString *macro in self.customMacros)
+        {
+            NSArray *parameters = self.customMacros[macro];
+            if (![parameters isKindOfClass:[NSArray class]]) {
+                NSLog(@"skipping bad macro: %@ (%@)", macro, parameters);
+                continue;
+            }
+            
+            NSSet *parameterSet = [NSSet setWithArray:parameters];
+            if ([parameterSet count] < 1 || ![parameterSet isSubsetOfSet:validParameters]) {
+                NSLog(@"skipping bad macro: %@ (%@)", macro, parameters);
+                continue;
+            }
+            
+            [validMacros setObject:parameters forKey:macro];
+        }
 		
 		_validMacros = validMacros;
 	}

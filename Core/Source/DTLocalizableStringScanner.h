@@ -12,6 +12,12 @@
 
 typedef void(^DTLocalizableStringEntryFoundCallback)(DTLocalizableStringEntry *);
 
+extern NSString * const DTLocalizableStringParamaterKey;
+extern NSString * const DTLocalizableStringParamaterComment;
+extern NSString * const DTLocalizableStringParamaterValue;
+extern NSString * const DTLocalizableStringParamaterBundle;
+extern NSString * const DTLocalizableStringParamaterTable;
+
 /**
  Source Code scanner operation, based on `NSOperation`. Scans a a source file and emits an entryFoundCallback whenever a new localized string Macro is encountered.
  */
